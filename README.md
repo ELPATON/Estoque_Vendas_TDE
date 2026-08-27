@@ -13,7 +13,7 @@ manualmente, sem uso de funções prontas da linguagem.
 | Integrante | Módulos | Status |
 |---|---|---|
 | Matheus | `produto.py`, `busca.py` | ✅ Concluído |
-| 2 | `vendas.py`, `pilha.py` | 🚧 Em desenvolvimento |
+| 2 | `vendas.py`, `pilha.py` | ✅ Concluído |
 |  3 | `fila_prioridade.py`, `ordenacao.py` | 🚧 Em desenvolvimento |
 
 ## Estrutura do projeto
