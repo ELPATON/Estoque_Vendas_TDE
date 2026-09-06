@@ -29,18 +29,10 @@ import produto
 import pilha
 
 vendas = []
-
-# Contador usado para gerar o número sequencial de cada venda.
 _proximo_numero = 1
 
 
 def validar_dados_venda(codigo_produto, quantidade):
-    """
-    Valida os dados de entrada de uma venda:
-    - o produto precisa existir no estoque;
-    - a quantidade precisa ser um inteiro positivo;
-    - precisa haver estoque suficiente para atender a venda.
-    """
     if not codigo_produto or not str(codigo_produto).strip():
         return False, "Código do produto é obrigatório."
 
@@ -67,27 +59,10 @@ def validar_dados_venda(codigo_produto, quantidade):
 
 
 def buscar_venda_por_numero(numero):
-    """
-    Busca uma venda por número, reutilizando o algoritmo de busca
-    linear manual de busca.py.
-
-    Complexidade:
-        Melhor caso: O(1) -> venda é a primeira da lista
-        Pior caso:   O(n) -> venda é a última ou não existe
-        Caso médio:  O(n)
-    """
     return busca.busca_linear(vendas, "numero", numero)
 
 
 def cadastrar_venda(codigo_produto, quantidade):
-    """
-    Registra uma nova venda:
-    1. valida os dados e a disponibilidade em estoque;
-    2. dá baixa na quantidade vendida do estoque (produto.py);
-    3. adiciona a venda na lista de vendas;
-    4. empilha a venda no histórico (pilha.py), permitindo desfazer
-       depois.
-    """
     global _proximo_numero
 
     valido, mensagem = validar_dados_venda(codigo_produto, quantidade)
@@ -97,7 +72,6 @@ def cadastrar_venda(codigo_produto, quantidade):
     quantidade = int(quantidade)
     produto_vendido = produto.buscar_produto_por_codigo(codigo_produto)
 
-    # Baixa no estoque
     produto.alterar_produto(
         codigo_produto,
         quantidade_estoque=produto_vendido["quantidade_estoque"] - quantidade,
@@ -123,7 +97,6 @@ def cadastrar_venda(codigo_produto, quantidade):
 
 
 def consultar_venda(numero):
-    """Consulta uma venda pelo número."""
     venda = buscar_venda_por_numero(numero)
     if venda is None:
         return False, f"Venda número {numero} não encontrada."
@@ -131,11 +104,6 @@ def consultar_venda(numero):
 
 
 def alterar_venda(numero, nova_quantidade):
-    """
-    Altera a quantidade de uma venda já registrada, ajustando o
-    estoque pela diferença entre a quantidade antiga e a nova
-    (devolve ou retira do estoque conforme o caso).
-    """
     venda = buscar_venda_por_numero(numero)
     if venda is None:
         return False, f"Venda número {numero} não encontrada."
@@ -156,8 +124,6 @@ def alterar_venda(numero, nova_quantidade):
         )
 
     diferenca = nova_quantidade - venda["quantidade"]
-    # diferenca > 0: está vendendo mais, precisa tirar mais do estoque
-    # diferenca < 0: está vendendo menos, devolve a diferença ao estoque
     if diferenca > 0 and diferenca > produto_vendido["quantidade_estoque"]:
         return False, (
             f"Estoque insuficiente para aumentar a venda. Disponível: "
@@ -179,10 +145,6 @@ def alterar_venda(numero, nova_quantidade):
 
 
 def remover_venda(numero):
-    """
-    Remove uma venda do cadastro, devolvendo a quantidade vendida
-    para o estoque (estorno).
-    """
     venda = buscar_venda_por_numero(numero)
     if venda is None:
         return False, f"Venda número {numero} não encontrada."
@@ -201,23 +163,10 @@ def remover_venda(numero):
 
 
 def desfazer_ultima_venda():
-    """
-    Desfaz a última venda registrada, usando a pilha de histórico
-    (pilha.py). Remove a venda do topo da pilha, remove também da
-    lista de vendas e devolve a quantidade ao estoque.
-
-    Como a pilha e a lista de vendas são preenchidas juntas em
-    cadastrar_venda(), o topo da pilha corresponde sempre à venda
-    mais recente da lista.
-    """
     if pilha.pilha_vazia():
         return False, "Não há vendas no histórico para desfazer."
 
     venda = pilha.desempilhar_ultima_venda()
-
-    # Remove também da lista de vendas (se ainda estiver lá — pode já
-    # ter sido removida manualmente via remover_venda; nesse caso só
-    # avisamos, sem devolver estoque duas vezes).
     venda_na_lista = buscar_venda_por_numero(venda["numero"])
     if venda_na_lista is None:
         return True, (
@@ -242,5 +191,4 @@ def desfazer_ultima_venda():
 
 
 def listar_vendas():
-    """Retorna a lista completa de vendas (percurso simples)."""
     return vendas

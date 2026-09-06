@@ -1,4 +1,3 @@
-
 import busca
 
 produtos = []
@@ -6,7 +5,6 @@ produtos = []
 
 def validar_dados_produto(codigo, nome, categoria, quantidade_estoque,
                            quantidade_minima, preco):
-    
     if not codigo or not str(codigo).strip():
         return False, "Código do produto é obrigatório."
     if not nome or not str(nome).strip():
@@ -37,27 +35,11 @@ def validar_dados_produto(codigo, nome, categoria, quantidade_estoque,
 
 
 def buscar_produto_por_codigo(codigo):
-    """
-    Busca produto por código, usando o algoritmo de busca linear
-    manual implementado em busca.py (evita duplicar a lógica de
-    busca em cada módulo).
-
-    Complexidade:
-        Melhor caso: O(1)  -> produto é o primeiro da lista
-        Pior caso:   O(n)  -> produto é o último ou não existe, percorre tudo
-        Caso médio:  O(n)
-
-    Retorna o dicionário do produto se encontrado, ou None.
-    """
     return busca.busca_linear(produtos, "codigo", codigo)
 
 
 def cadastrar_produto(codigo, nome, categoria, quantidade_estoque,
                        quantidade_minima, preco):
-    """
-    Cadastra um novo produto na lista, se os dados forem válidos
-    e o código ainda não existir.
-    """
     valido, mensagem = validar_dados_produto(
         codigo, nome, categoria, quantidade_estoque, quantidade_minima, preco
     )
@@ -81,7 +63,6 @@ def cadastrar_produto(codigo, nome, categoria, quantidade_estoque,
 
 
 def consultar_produto(codigo):
-    """Consulta um produto pelo código, usando a busca manual."""
     produto = buscar_produto_por_codigo(codigo)
     if produto is None:
         return False, f"Produto com código '{codigo}' não encontrado."
@@ -91,10 +72,6 @@ def consultar_produto(codigo):
 def alterar_produto(codigo, nome=None, categoria=None,
                      quantidade_estoque=None, quantidade_minima=None,
                      preco=None):
-    """
-    Altera os dados de um produto existente. Só altera os campos
-    que forem informados (diferentes de None).
-    """
     produto = buscar_produto_por_codigo(codigo)
     if produto is None:
         return False, f"Produto com código '{codigo}' não encontrado."
@@ -124,7 +101,6 @@ def alterar_produto(codigo, nome=None, categoria=None,
 
 
 def remover_produto(codigo):
-    """Remove um produto do cadastro pelo código."""
     produto = buscar_produto_por_codigo(codigo)
     if produto is None:
         return False, f"Produto com código '{codigo}' não encontrado."
@@ -134,15 +110,10 @@ def remover_produto(codigo):
 
 
 def listar_produtos():
-    """Retorna a lista completa de produtos (percurso simples)."""
     return produtos
 
 
 def filtrar_produtos_por_categoria(categoria):
-    """
-    Filtra produtos por categoria, percorrendo a lista manualmente
-    (sem usar filter()).
-    """
     resultado = []
     for i in range(len(produtos)):
         if produtos[i]["categoria"].lower() == categoria.lower():
