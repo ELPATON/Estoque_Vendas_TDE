@@ -1,28 +1,3 @@
-"""
-Módulo Vendas
--------------
-Autor: Charlison Almeida da Silva
-
-Responsável pelo cadastro de vendas do mercadinho, integrando com o
-estoque (produto.py) e com o histórico de vendas (pilha.py).
-
-Estrutura de dados usada: LISTA.
-Justificativa: assim como em produto.py, o cadastro de vendas precisa
-de inserção, remoção e percurso livre (consultar, alterar, remover
-qualquer venda, não só a última) — por isso lista, e não pilha. A
-pilha (pilha.py) é usada só para o histórico/desfazer, que é uma
-responsabilidade diferente (LIFO).
-
-Cada venda é registrada como um dicionário:
-    {
-        "numero": int,              # identificador sequencial da venda
-        "codigo_produto": str,
-        "nome_produto": str,
-        "quantidade": int,
-        "preco_unitario": float,
-        "valor_total": float,
-    }
-"""
 
 import busca
 import produto
