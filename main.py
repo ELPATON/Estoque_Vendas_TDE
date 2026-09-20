@@ -1,17 +1,3 @@
-"""
-Sistema ERP - Mercadinho
--------------------------
-Ponto de entrada do sistema. Contém apenas o menu e a leitura de
-dados do usuário; toda a lógica de negócio fica nos módulos:
-
-    produto.py           -> Lista (cadastro de produtos)          [PRONTO]
-    busca.py               -> Algoritmo de busca linear manual       [PRONTO]
-    venda.py                -> Lista (cadastro de vendas)             [TODO - Integrante 2]
-    pilha.py                  -> Pilha (histórico de vendas, LIFO)      [TODO - Integrante 2]
-    fila_prioridade.py          -> Fila de prioridade (reposição)         [TODO - Integrante 3]
-    ordenacao.py                  -> Algoritmo de ordenação manual           [TODO - Integrante 3]
-    relatorios.py                   -> Relatórios que integram todos os módulos
-"""
 
 import busca
 import produto
