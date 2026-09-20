@@ -188,7 +188,7 @@ def menu_relatorios():
 
 
 def carregar_dados_exemplo():
-    # Produtos mockados para teste do sistema. A função é chamada no início do main().
+   
     produto.cadastrar_produto("P001", "Arroz 5kg", "Alimentos", 10, 5, 24.90)
     produto.cadastrar_produto("P002", "Feijão 1kg", "Alimentos", 3, 5, 8.50)
     produto.cadastrar_produto("P003", "Detergente", "Limpeza", 0, 10, 2.99)
