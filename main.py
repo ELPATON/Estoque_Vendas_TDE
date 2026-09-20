@@ -25,7 +25,7 @@ def ler_float(mensagem):
 
 
 def menu_produto():
-    # Menu de Produto — 100% funcional (Produto, CRUD e Busca prontos).
+     (Produto, CRUD e Busca prontos).
     while True:
         print("\n--- MENU PRODUTO ---")
         print("1. Cadastrar produto")
