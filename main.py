@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-#Autores: Matheus Alcantara, Gustavo Reis, Charlison Almeida.
-=======
-#Matheus Alcantara, Gustavo Reis, Charlison Almeida
->>>>>>> 69eecfa31994c118245b8e1a80b7afae3d94b66a
+# Autores: Matheus Alcantara, Gustavo Reis, Charlison Almeida.
 import busca
 import produto
 import vendas
@@ -29,7 +25,7 @@ def ler_float(mensagem):
 
 
 def menu_produto():
-    """(Produto, CRUD e Busca prontos)"""
+    # (Produto, CRUD e Busca prontos).
     while True:
         print("\n--- MENU PRODUTO ---")
         print("1. Cadastrar produto")
@@ -39,9 +35,9 @@ def menu_produto():
         print("0. Voltar")
         opcao = input("Escolha uma opção: ").strip()
 
-        match opcao:  
+        match opcao:
             case "1":
-                codigo = input("Código: ").strip()               
+                codigo = input("Código: ").strip()
                 nome = input("Nome: ").strip()
                 categoria = input("Categoria: ").strip()
                 qtd_estoque = ler_int("Quantidade em estoque: ")
@@ -82,7 +78,7 @@ def menu_produto():
 
             case "0":
                 break
-            
+
             case _:
                 print("Opção inválida.")
 
@@ -104,7 +100,7 @@ def menu_vendas():
         opcao = input("Escolha uma opção: ").strip()
 
         try:
-            match opcao:  
+            match opcao:
                 case "1":
                     codigo_produto = input("Código do produto: ").strip()
                     quantidade = ler_int("Quantidade vendida: ")
@@ -192,7 +188,6 @@ def menu_relatorios():
 
 
 def carregar_dados_exemplo():
-   
     produto.cadastrar_produto("P001", "Arroz 5kg", "Alimentos", 10, 5, 24.90)
     produto.cadastrar_produto("P002", "Feijão 1kg", "Alimentos", 3, 5, 8.50)
     produto.cadastrar_produto("P003", "Detergente", "Limpeza", 0, 10, 2.99)
