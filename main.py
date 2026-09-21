@@ -1,6 +1,6 @@
 
 #Matheus Alcantara, Gustavo Reis, Charlison Almeida
->>>>>>> 69eecfa31994c118245b8e1a80b7afae3d94b66a
+
 import busca
 import produto
 import vendas
