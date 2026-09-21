@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 # Autores: Matheus Alcantara, Gustavo Reis, Charlison Almeida.
+=======
+
+#Matheus Alcantara, Gustavo Reis, Charlison Almeida
+
+>>>>>>> 4e4b6828ac912e327733f1a61bfe4e00b0dae208
 import busca
 import produto
 import vendas
