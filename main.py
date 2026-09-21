@@ -1,4 +1,4 @@
-
+#Autores: Matheus Alcantara, Gustavo Reis, Charlison Almeida.
 import busca
 import produto
 import vendas
@@ -25,7 +25,7 @@ def ler_float(mensagem):
 
 
 def menu_produto():
-     (Produto, CRUD e Busca prontos).
+    """(Produto, CRUD e Busca prontos)"""
     while True:
         print("\n--- MENU PRODUTO ---")
         print("1. Cadastrar produto")
