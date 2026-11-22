@@ -31,3 +31,20 @@ def busca_linear_string(lista, campo, valor_procurado, ignorar_maiusculas=True):
         if atual == valor:
             return item
     return None
+
+
+# Busca direta na árvore AVL: compara a chave procurada com a do nó atual e
+# desce para a esquerda (chave menor) ou para a direita (chave maior).
+# Retorna o valor guardado no nó (o produto) ou None se a chave não existir.
+def busca_avl(raiz, chave):
+    atual = raiz
+
+    while atual is not None:
+        if chave == atual.chave:
+            return atual.valor
+        if chave < atual.chave:
+            atual = atual.esquerda
+        else:
+            atual = atual.direita
+
+    return None
