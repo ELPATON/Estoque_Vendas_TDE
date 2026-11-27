@@ -1,9 +1,9 @@
 # Autores: Matheus Alcantara, Gustavo Reis, Charlison Almeida.
-import busca
 import produto
 import vendas
 import ordenacao
 import relatorios
+import fila_prioridade
 
 
 def ler_int(mensagem):
@@ -25,7 +25,6 @@ def ler_float(mensagem):
 
 
 def menu_produto():
-    # (Produto, CRUD e Busca prontos).
     while True:
         print("\n--- MENU PRODUTO ---")
         print("1. Cadastrar produto")
@@ -62,9 +61,13 @@ def menu_produto():
                 qtd_minima_str = input("Nova quantidade mínima: ").strip()
                 preco_str = input("Novo preço: ").strip()
 
-                qtd_estoque = int(qtd_estoque_str) if qtd_estoque_str else None
-                qtd_minima = int(qtd_minima_str) if qtd_minima_str else None
-                preco = float(preco_str) if preco_str else None
+                try:
+                    qtd_estoque = int(qtd_estoque_str) if qtd_estoque_str else None
+                    qtd_minima = int(qtd_minima_str) if qtd_minima_str else None
+                    preco = float(preco_str) if preco_str else None
+                except ValueError:
+                    print("Valor numérico inválido. Alteração cancelada.")
+                    continue
 
                 sucesso, mensagem = produto.alterar_produto(
                     codigo, nome, categoria, qtd_estoque, qtd_minima, preco
@@ -84,11 +87,6 @@ def menu_produto():
 
 
 def menu_vendas():
-    """
-    Menu de Venda — depende de venda.py e pilha.py, ainda em
-    construção (Integrante 2). As chamadas ficam em try/except só
-    para o sistema não travar antes dessas partes ficarem prontas.
-    """
     while True:
         print("\n--- MENU VENDA ---")
         print("1. Registrar venda")
@@ -99,55 +97,92 @@ def menu_vendas():
         print("0. Voltar")
         opcao = input("Escolha uma opção: ").strip()
 
-        try:
-            match opcao:
-                case "1":
-                    codigo_produto = input("Código do produto: ").strip()
-                    quantidade = ler_int("Quantidade vendida: ")
-                    sucesso, mensagem = vendas.cadastrar_venda(codigo_produto, quantidade)
-                    print(mensagem)
+        match opcao:
+            case "1":
+                codigo_produto = input("Código do produto: ").strip()
+                quantidade = ler_int("Quantidade vendida: ")
+                sucesso, mensagem = vendas.cadastrar_venda(codigo_produto, quantidade)
+                print(mensagem)
 
-                case "2":
-                    numero = ler_int("Número da venda: ")
-                    sucesso, resultado = vendas.consultar_venda(numero)
-                    print(resultado)
+            case "2":
+                numero = ler_int("Número da venda: ")
+                sucesso, resultado = vendas.consultar_venda(numero)
+                print(resultado)
 
-                case "3":
-                    numero = ler_int("Número da venda a alterar: ")
-                    quantidade = ler_int("Nova quantidade: ")
-                    sucesso, mensagem = vendas.alterar_venda(numero, quantidade)
-                    print(mensagem)
+            case "3":
+                numero = ler_int("Número da venda a alterar: ")
+                quantidade = ler_int("Nova quantidade: ")
+                sucesso, mensagem = vendas.alterar_venda(numero, quantidade)
+                print(mensagem)
 
-                case "4":
-                    numero = ler_int("Número da venda a remover: ")
-                    sucesso, mensagem = vendas.remover_venda(numero)
-                    print(mensagem)
+            case "4":
+                numero = ler_int("Número da venda a remover: ")
+                sucesso, mensagem = vendas.remover_venda(numero)
+                print(mensagem)
 
-                case "5":
-                    sucesso, mensagem = vendas.desfazer_ultima_venda()
-                    print(mensagem)
+            case "5":
+                sucesso, mensagem = vendas.desfazer_ultima_venda()
+                print(mensagem)
 
-                case "0":
-                    break
+            case "0":
+                break
 
-                case _:
-                    print("Opção inválida.")
+            case _:
+                print("Opção inválida.")
 
-        except NotImplementedError as erro:
-            print(f"Funcionalidade ainda não implementada: {erro}")
+
+def menu_reposicao():
+    while True:
+        print("\n--- MENU REPOSIÇÃO (fila de prioridade / heap) ---")
+        print("1. Exibir fila de reposição")
+        print("2. Repor o produto mais crítico")
+        print("0. Voltar")
+        opcao = input("Escolha uma opção: ").strip()
+
+        match opcao:
+            case "1":
+                relatorios.relatorio_fila_prioridade()
+
+            case "2":
+                fila_prioridade.atualizar_fila()
+                critico = fila_prioridade.remover_maior_prioridade()
+                if critico is None:
+                    print("Nenhum produto precisa de reposição no momento.")
+                    continue
+
+                print(
+                    f"Produto mais crítico: {critico['codigo']} | {critico['nome']} | "
+                    f"estoque: {critico['quantidade_estoque']} | "
+                    f"mínimo: {critico['quantidade_minima']}"
+                )
+                quantidade = ler_int("Quantidade a repor: ")
+                sucesso, mensagem = produto.alterar_produto(
+                    critico["codigo"],
+                    quantidade_estoque=critico["quantidade_estoque"] + quantidade,
+                )
+                print(mensagem)
+
+            case "0":
+                break
+
+            case _:
+                print("Opção inválida.")
 
 
 def menu_relatorios():
     while True:
         print("\n--- MENU RELATÓRIOS ---")
-        print("1. Listar todos os produtos          [pronto]")
-        print("2. Listar todas as vendas            [depende do Integrante 2]")
-        print("3. Filtrar produtos por categoria    [pronto]")
-        print("4. Exibir fila de prioridade         [depende do Integrante 3]")
-        print("5. Exibir histórico de vendas (pilha) [depende do Integrante 2]")
-        print("6. Produtos ordenados por estoque    [manual]")
-        print("7. Produtos ordenados por preço      [manual]")
-        print("8. Vendas ordenadas por valor total  [manual]")
+        print("1. Listar todos os produtos")
+        print("2. Listar todas as vendas")
+        print("3. Filtrar produtos por categoria")
+        print("4. Exibir fila de prioridade")
+        print("5. Exibir histórico de vendas (pilha)")
+        print("6. Produtos ordenados por estoque (merge sort)")
+        print("7. Produtos ordenados por preço (merge sort)")
+        print("8. Vendas ordenadas por valor total (merge sort)")
+        print("9. Produtos - travessia em ordem")
+        print("10. Produtos - travessia pré-ordem")
+        print("11. Produtos - travessia pós-ordem")
         print("0. Voltar")
         opcao = input("Escolha uma opção: ").strip()
 
@@ -181,6 +216,12 @@ def menu_relatorios():
                 print("Vendas ordenadas por valor total (maior para menor):")
                 for item in vendas_registradas:
                     print(f"- Venda #{item['numero']} | {item['nome_produto']} | total: R$ {item['valor_total']:.2f}")
+            case "9":
+                relatorios.relatorio_travessia_em_ordem()
+            case "10":
+                relatorios.relatorio_travessia_pre_ordem()
+            case "11":
+                relatorios.relatorio_travessia_pos_ordem()
             case "0":
                 break
             case _:
@@ -201,7 +242,8 @@ def main():
         print("\n========= ERP MERCADINHO =========")
         print("1. Produtos")
         print("2. Vendas")
-        print("3. Relatórios")
+        print("3. Reposição de estoque")
+        print("4. Relatórios")
         print("0. Sair")
         opcao = input("Escolha uma opção: ").strip()
 
@@ -211,6 +253,8 @@ def main():
             case "2":
                 menu_vendas()
             case "3":
+                menu_reposicao()
+            case "4":
                 menu_relatorios()
             case "0":
                 print("Encerrando o sistema. Até logo!")

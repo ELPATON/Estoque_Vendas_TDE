@@ -57,4 +57,7 @@ def listar_historico():
     Retorna o histórico completo, do mais recente para o mais antigo
     (ordem natural de leitura de uma pilha, do topo para a base).
     """
-    return list(reversed(historico_vendas))
+    resultado = []
+    for i in range(len(historico_vendas) - 1, -1, -1):
+        resultado.append(historico_vendas[i])
+    return resultado

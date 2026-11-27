@@ -1,92 +1,93 @@
-import produto
-import vendas
-import pilha
-import fila_prioridade
+"""
+Ordenação por divisão e conquista (Merge Sort), implementada manualmente.
+
+Complexidade: O(n log n) no melhor, médio e pior caso (versão base com
+Bubble Sort: O(n²) no médio/pior caso). É estável: em empate, mantém a
+ordem original.
+"""
 
 
-def relatorio_listar_todos_produtos():
-    produtos = produto.listar_produtos()
-
-    if not produtos:
-        print("Nenhum produto cadastrado.")
-        return
-
-    print("\n--- RELATÓRIO: TODOS OS PRODUTOS ---")
-    for item in produtos:
-        print(
-            f"- {item['codigo']} | {item['nome']} | {item['categoria']} | "
-            f"estoque: {item['quantidade_estoque']} | "
-            f"mínimo: {item['quantidade_minima']} | "
-            f"preço: R$ {item['preco']:.2f}"
-        )
+def _valor_para_comparar(item, campo):
+    if isinstance(item, dict) and campo is not None:
+        return item.get(campo)
+    return item
 
 
-def relatorio_listar_todas_vendas():
-    vendas_registradas = vendas.listar_vendas()
+def _intercalar(esquerda, direita, campo, crescente):
+    resultado = []
+    i = 0
+    j = 0
 
-    if not vendas_registradas:
-        print("Nenhuma venda registrada.")
-        return
+    while i < len(esquerda) and j < len(direita):
+        valor_esquerda = _valor_para_comparar(esquerda[i], campo)
+        valor_direita = _valor_para_comparar(direita[j], campo)
 
-    print("\n--- RELATÓRIO: TODAS AS VENDAS ---")
-    total_geral = 0
-    for item in vendas_registradas:
-        print(
-            f"- Venda #{item['numero']} | {item['nome_produto']} | "
-            f"qtd: {item['quantidade']} | "
-            f"unitário: R$ {item['preco_unitario']:.2f} | "
-            f"total: R$ {item['valor_total']:.2f}"
-        )
-        total_geral += item["valor_total"]
+        # Só pega da direita se ela deve vir antes; no empate pega da esquerda
+        if crescente:
+            pegar_direita = valor_esquerda > valor_direita
+        else:
+            pegar_direita = valor_esquerda < valor_direita
 
-    print(f"\nTotal geral vendido: R$ {total_geral:.2f}")
+        if pegar_direita:
+            resultado.append(direita[j])
+            j += 1
+        else:
+            resultado.append(esquerda[i])
+            i += 1
 
+    while i < len(esquerda):
+        resultado.append(esquerda[i])
+        i += 1
 
-def relatorio_filtrar_produtos_por_categoria(categoria):
-    produtos_filtrados = produto.filtrar_produtos_por_categoria(categoria)
+    while j < len(direita):
+        resultado.append(direita[j])
+        j += 1
 
-    if not produtos_filtrados:
-        print(f"Nenhum produto encontrado na categoria '{categoria}'.")
-        return
-
-    print(f"\n--- RELATÓRIO: PRODUTOS DA CATEGORIA '{categoria}' ---")
-    for item in produtos_filtrados:
-        print(
-            f"- {item['codigo']} | {item['nome']} | "
-            f"estoque: {item['quantidade_estoque']} | "
-            f"preço: R$ {item['preco']:.2f}"
-        )
+    return resultado
 
 
-def relatorio_fila_prioridade():
-    fila_prioridade.atualizar_fila()
-    fila = fila_prioridade.listar_fila()
+def _merge_sort_recursivo(lista, campo, crescente):
+    if len(lista) < 2:
+        return lista
 
-    if not fila:
-        print("Nenhum produto precisa de reposição no momento.")
-        return
+    meio = len(lista) // 2
+    esquerda = _merge_sort_recursivo(lista[:meio], campo, crescente)
+    direita = _merge_sort_recursivo(lista[meio:], campo, crescente)
 
-    print("\n--- RELATÓRIO: FILA DE PRIORIDADE DE REPOSIÇÃO ---")
-    for item in fila:
-        prioridade = fila_prioridade.calcular_prioridade(item)
-        print(
-            f"- {item['codigo']} | {item['nome']} | "
-            f"estoque: {item['quantidade_estoque']} | "
-            f"mínimo: {item['quantidade_minima']} | "
-            f"prioridade: {prioridade}"
-        )
+    return _intercalar(esquerda, direita, campo, crescente)
 
 
-def relatorio_historico_pilha():
-    historico = pilha.listar_historico()
+def merge_sort(lista, campo=None, crescente=True):
+    if lista is None or len(lista) < 2:
+        return lista
 
-    if not historico:
-        print("Histórico de vendas vazio.")
-        return
+    lista[:] = _merge_sort_recursivo(lista, campo, crescente)
+    return lista
 
-    print("\n--- RELATÓRIO: HISTÓRICO DE VENDAS (mais recente primeiro) ---")
-    for item in historico:
-        print(
-            f"- Venda #{item['numero']} | {item['nome_produto']} | "
-            f"qtd: {item['quantidade']} | total: R$ {item['valor_total']:.2f}"
-        )
+
+# ----------------------------------------------------------------------
+# Ordenações usadas nos relatórios
+# ----------------------------------------------------------------------
+
+def ordenar_por_campo(lista, campo, crescente=True):
+    return merge_sort(lista, campo=campo, crescente=crescente)
+
+
+def ordenar_produtos_por_estoque(produtos, crescente=False):
+    return merge_sort(produtos, campo="quantidade_estoque", crescente=crescente)
+
+
+def ordenar_produtos_por_preco(produtos, crescente=False):
+    return merge_sort(produtos, campo="preco", crescente=crescente)
+
+
+def ordenar_vendas_por_valor_total(vendas, crescente=False):
+    return merge_sort(vendas, campo="valor_total", crescente=crescente)
+
+
+def ordenar_produtos_por_nome(produtos, crescente=True):
+    return merge_sort(produtos, campo="nome", crescente=crescente)
+
+
+def ordenar_vendas_por_numero(vendas, crescente=True):
+    return merge_sort(vendas, campo="numero", crescente=crescente)

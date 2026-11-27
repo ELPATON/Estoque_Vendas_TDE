@@ -1,9 +1,10 @@
-
 import busca
 import produto
 import pilha
+from avl import ArvoreAVL
 
-vendas = []
+# Armazenamento principal: árvore AVL com chave = número da venda.
+arvore_vendas = ArvoreAVL()
 _proximo_numero = 1
 
 
@@ -11,6 +12,7 @@ def validar_dados_venda(codigo_produto, quantidade):
     if not codigo_produto or not str(codigo_produto).strip():
         return False, "Código do produto é obrigatório."
 
+    # Busca do produto na AVL: O(log n)
     produto_encontrado = produto.buscar_produto_por_codigo(codigo_produto)
     if produto_encontrado is None:
         return False, f"Produto com código '{codigo_produto}' não encontrado."
@@ -34,7 +36,11 @@ def validar_dados_venda(codigo_produto, quantidade):
 
 
 def buscar_venda_por_numero(numero):
-    return busca.busca_linear(vendas, "numero", numero)
+    try:
+        numero = int(numero)
+    except (ValueError, TypeError):
+        return None
+    return busca.busca_avl(arvore_vendas.raiz, numero)
 
 
 def cadastrar_venda(codigo_produto, quantidade):
@@ -61,7 +67,7 @@ def cadastrar_venda(codigo_produto, quantidade):
         "valor_total": round(quantidade * produto_vendido["preco"], 2),
     }
 
-    vendas.append(venda)
+    arvore_vendas.inserir(venda["numero"], venda)
     pilha.empilhar_venda(venda)
     _proximo_numero += 1
 
@@ -133,7 +139,7 @@ def remover_venda(numero):
             ),
         )
 
-    vendas.remove(venda)
+    arvore_vendas.remover(venda["numero"])
     return True, f"Venda #{numero} removida e quantidade devolvida ao estoque."
 
 
@@ -142,8 +148,8 @@ def desfazer_ultima_venda():
         return False, "Não há vendas no histórico para desfazer."
 
     venda = pilha.desempilhar_ultima_venda()
-    venda_na_lista = buscar_venda_por_numero(venda["numero"])
-    if venda_na_lista is None:
+    venda_na_arvore = buscar_venda_por_numero(venda["numero"])
+    if venda_na_arvore is None:
         return True, (
             f"Venda #{venda['numero']} removida do histórico (já não estava "
             "mais na lista de vendas)."
@@ -157,7 +163,7 @@ def desfazer_ultima_venda():
                 produto_vendido["quantidade_estoque"] + venda["quantidade"]
             ),
         )
-    vendas.remove(venda_na_lista)
+    arvore_vendas.remover(venda["numero"])
 
     return True, (
         f"Última venda desfeita: #{venda['numero']} — {venda['quantidade']}x "
@@ -166,4 +172,5 @@ def desfazer_ultima_venda():
 
 
 def listar_vendas():
-    return vendas
+    """Lista nova (cópia) em ordem crescente de número, via travessia em ordem."""
+    return arvore_vendas.valores_em_ordem()
