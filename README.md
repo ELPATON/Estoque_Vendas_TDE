@@ -39,7 +39,7 @@ Estoque_Vendas_TDE/
 |---|---|---|
 | Árvore AVL | Cadastro de Produtos (chave = código) e de Vendas (chave = número) | Árvore de busca que se mantém balanceada por rotações: inserção, remoção e busca em O(log n) mesmo com muitos registros |
 | Pilha (LIFO) | Histórico de vendas do turno | Permite desfazer sempre a última venda registrada, com inserção e remoção só no topo |
-| Fila de prioridade | Reposição de estoque | A remoção entrega sempre o produto mais crítico (mais abaixo do estoque mínimo), não o que entrou primeiro |
+| Fila de prioridade (heap binário máximo) | Reposição de estoque | A remoção entrega sempre o produto mais crítico (maior diferença entre mínimo e estoque), não o que entrou primeiro; inserir e remover em O(log n) |
 
 ## Algoritmos manuais
 
@@ -47,6 +47,7 @@ Estoque_Vendas_TDE/
 - **Busca linear** (`busca.py`): mantida como busca genérica por campo em listas.
 - **Merge Sort** (`ordenacao.py`): divisão e conquista, O(n log n) e estável. Usado para ordenar produtos por estoque e preço e vendas por valor total.
 - **Bubble Sort** (`ordenacao.py`): versão original, mantida no módulo.
+- **Heap binário máximo** (`fila_prioridade.py`): fila de prioridade guardada em lista, com subida e descida de elementos. Prioridade = quantidade mínima − estoque; no empate, sai o menor código.
 - **Travessias da AVL**: em ordem (códigos crescentes), pré-ordem e pós-ordem.
 
 ## Como rodar
@@ -86,6 +87,8 @@ Os dados ficam apenas em memória: ao fechar o programa, o que foi cadastrado é
 - Ordenação dos relatórios trocada de Bubble Sort para **Merge Sort**
 - Menu de **reposição de estoque** (fila de prioridade) adicionado ao menu principal
 - Relatórios de **travessia em ordem, pré-ordem e pós-ordem** dos produtos
+- Fila de reposição reescrita como **heap binário máximo** (antes era uma lista com varredura linear que ainda lia a estrutura antiga de produtos)
+- `relatorios.py` completo: listagens, filtro por categoria, fila de reposição, histórico da pilha e as três travessias da AVL
 - Removido o aviso de "funcionalidade não implementada": todos os módulos agora têm código
 
 ## Checklist do TDE
@@ -96,3 +99,5 @@ Os dados ficam apenas em memória: ao fechar o programa, o que foi cadastrado é
 - [x] Algoritmo de ordenação manual (Merge Sort)
 - [x] CRUD com validação (Produto)
 - [x] CRUD com validação (Venda)
+- [x] Fila de prioridade (reposição de estoque, heap binário)
+- [x] Relatórios completos

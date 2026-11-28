@@ -1,93 +1,132 @@
 """
-Ordenação por divisão e conquista (Merge Sort), implementada manualmente.
+Módulo Relatórios
+-----------------
+Relatórios que integram os demais módulos: produto (AVL), vendas (AVL),
+pilha (histórico) e fila_prioridade (heap de reposição).
 
-Complexidade: O(n log n) no melhor, médio e pior caso (versão base com
-Bubble Sort: O(n²) no médio/pior caso). É estável: em empate, mantém a
-ordem original.
+Todas as funções apenas imprimem na tela; os dados vêm dos módulos de
+origem, que são a única fonte de verdade.
 """
 
-
-def _valor_para_comparar(item, campo):
-    if isinstance(item, dict) and campo is not None:
-        return item.get(campo)
-    return item
-
-
-def _intercalar(esquerda, direita, campo, crescente):
-    resultado = []
-    i = 0
-    j = 0
-
-    while i < len(esquerda) and j < len(direita):
-        valor_esquerda = _valor_para_comparar(esquerda[i], campo)
-        valor_direita = _valor_para_comparar(direita[j], campo)
-
-        # Só pega da direita se ela deve vir antes; no empate pega da esquerda
-        if crescente:
-            pegar_direita = valor_esquerda > valor_direita
-        else:
-            pegar_direita = valor_esquerda < valor_direita
-
-        if pegar_direita:
-            resultado.append(direita[j])
-            j += 1
-        else:
-            resultado.append(esquerda[i])
-            i += 1
-
-    while i < len(esquerda):
-        resultado.append(esquerda[i])
-        i += 1
-
-    while j < len(direita):
-        resultado.append(direita[j])
-        j += 1
-
-    return resultado
+import produto
+import vendas
+import pilha
+import fila_prioridade
 
 
-def _merge_sort_recursivo(lista, campo, crescente):
-    if len(lista) < 2:
-        return lista
-
-    meio = len(lista) // 2
-    esquerda = _merge_sort_recursivo(lista[:meio], campo, crescente)
-    direita = _merge_sort_recursivo(lista[meio:], campo, crescente)
-
-    return _intercalar(esquerda, direita, campo, crescente)
+def _linha_produto(item):
+    return (
+        f"- {item['codigo']} | {item['nome']} | {item['categoria']} | "
+        f"estoque: {item['quantidade_estoque']} | "
+        f"mínimo: {item['quantidade_minima']} | "
+        f"preço: R$ {item['preco']:.2f}"
+    )
 
 
-def merge_sort(lista, campo=None, crescente=True):
-    if lista is None or len(lista) < 2:
-        return lista
-
-    lista[:] = _merge_sort_recursivo(lista, campo, crescente)
-    return lista
-
-
-# ----------------------------------------------------------------------
-# Ordenações usadas nos relatórios
-# ----------------------------------------------------------------------
-
-def ordenar_por_campo(lista, campo, crescente=True):
-    return merge_sort(lista, campo=campo, crescente=crescente)
+def _linha_venda(item):
+    return (
+        f"- Venda #{item['numero']} | {item['codigo_produto']} | "
+        f"{item['nome_produto']} | {item['quantidade']}x "
+        f"R$ {item['preco_unitario']:.2f} | total: R$ {item['valor_total']:.2f}"
+    )
 
 
-def ordenar_produtos_por_estoque(produtos, crescente=False):
-    return merge_sort(produtos, campo="quantidade_estoque", crescente=crescente)
+def _imprimir_produtos(titulo, lista, mensagem_vazia):
+    print(f"\n--- {titulo} ---")
+    if len(lista) == 0:
+        print(mensagem_vazia)
+        return
+    for item in lista:
+        print(_linha_produto(item))
+    print(f"Total: {len(lista)} produto(s).")
 
 
-def ordenar_produtos_por_preco(produtos, crescente=False):
-    return merge_sort(produtos, campo="preco", crescente=crescente)
+def relatorio_listar_todos_produtos():
+    _imprimir_produtos(
+        "PRODUTOS CADASTRADOS",
+        produto.listar_produtos(),
+        "Nenhum produto cadastrado.",
+    )
 
 
-def ordenar_vendas_por_valor_total(vendas, crescente=False):
-    return merge_sort(vendas, campo="valor_total", crescente=crescente)
+def relatorio_listar_todas_vendas():
+    lista = vendas.listar_vendas()
+    print("\n--- VENDAS REGISTRADAS ---")
+    if len(lista) == 0:
+        print("Nenhuma venda registrada.")
+        return
+
+    total_geral = 0.0
+    for item in lista:
+        print(_linha_venda(item))
+        total_geral += item["valor_total"]
+    print(f"Total: {len(lista)} venda(s) | valor somado: R$ {total_geral:.2f}")
 
 
-def ordenar_produtos_por_nome(produtos, crescente=True):
-    return merge_sort(produtos, campo="nome", crescente=crescente)
+def relatorio_filtrar_produtos_por_categoria(categoria):
+    if not categoria or not categoria.strip():
+        print("Informe uma categoria para filtrar.")
+        return
+
+    _imprimir_produtos(
+        f"PRODUTOS DA CATEGORIA '{categoria.strip()}'",
+        produto.filtrar_produtos_por_categoria(categoria.strip()),
+        "Nenhum produto encontrado nessa categoria.",
+    )
 
 
-def ordenar_vendas_por_numero(vendas, crescente=True):
-    return merge_sort(vendas, campo="numero", crescente=crescente)
+def relatorio_fila_prioridade():
+    fila_prioridade.atualizar_fila()
+    lista = fila_prioridade.listar_fila()
+
+    print("\n--- FILA DE REPOSIÇÃO (mais crítico primeiro) ---")
+    if len(lista) == 0:
+        print("Nenhum produto precisa de reposição no momento.")
+        return
+
+    posicao = 1
+    for item in lista:
+        falta = fila_prioridade.calcular_prioridade(item)
+        print(
+            f"{posicao}º {item['codigo']} | {item['nome']} | "
+            f"estoque: {item['quantidade_estoque']} | "
+            f"mínimo: {item['quantidade_minima']} | "
+            f"faltam: {falta}"
+        )
+        posicao += 1
+
+
+def relatorio_historico_pilha():
+    historico = pilha.listar_historico()
+
+    print("\n--- HISTÓRICO DE VENDAS (do mais recente para o mais antigo) ---")
+    if len(historico) == 0:
+        print("Nenhuma venda no histórico.")
+        return
+
+    for item in historico:
+        print(_linha_venda(item))
+
+
+def relatorio_travessia_em_ordem():
+    _imprimir_produtos(
+        "PRODUTOS - TRAVESSIA EM ORDEM (esquerda, raiz, direita)",
+        produto.listar_produtos(),
+        "Nenhum produto cadastrado.",
+    )
+
+
+def relatorio_travessia_pre_ordem():
+    _imprimir_produtos(
+        "PRODUTOS - TRAVESSIA PRÉ-ORDEM (raiz, esquerda, direita)",
+        produto.listar_produtos_pre_ordem(),
+        "Nenhum produto cadastrado.",
+    )
+
+
+def relatorio_travessia_pos_ordem():
+    _imprimir_produtos(
+        "PRODUTOS - TRAVESSIA PÓS-ORDEM (esquerda, direita, raiz)",
+        produto.listar_produtos_pos_ordem(),
+        "Nenhum produto cadastrado.",
+    )
