@@ -96,5 +96,3 @@ Os dados ficam apenas em memória: ao fechar o programa, o que foi cadastrado é
 - [x] Algoritmo de ordenação manual (Merge Sort)
 - [x] CRUD com validação (Produto)
 - [x] CRUD com validação (Venda)
-- [ ] Fila de prioridade (reposição de estoque) — em ajuste: `fila_prioridade.py` ainda lê a lista antiga de produtos
-- [ ] Relatórios completos — em ajuste: `relatorios.py` ainda não tem as funções chamadas pelo menu
